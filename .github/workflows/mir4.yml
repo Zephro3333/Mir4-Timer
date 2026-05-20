@@ -2,7 +2,7 @@ name: MIR4 Timer
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # 👈 mais seguro que * * * * *
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -21,10 +21,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Show files (DEBUG)
+      - name: Install dependencies
         run: |
-          ls -R
+          pip install requests
 
-      - name: Run bot (DEBUG MODE)
+      - name: Run bot
         run: |
           python -u main.py
