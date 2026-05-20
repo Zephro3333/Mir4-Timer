@@ -10,7 +10,7 @@ def build_boss_message(bosses):
     for b in bosses:
         grouped[b["time"]].append(b)
 
-    msg = "🔥 MIR4 BOSS ALERT\n\n"
+    msg = "🔥 MIR4 BOSS ALERT (15 MIN)\n\n"
 
     for time in sorted(grouped.keys()):
         msg += f"🕒 SERVER TIME: {time}\n\n"
