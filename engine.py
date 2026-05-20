@@ -5,20 +5,18 @@ from webhook import send_message
 from health import Health
 
 
-# 🎯 AJUSTE DE SERVIDOR (ALTERÁVEL)
-SERVER_OFFSET_HOURS = 0  # <- MUDA ISTO SE NECESSÁRIO
-
-
 class MIR4Engine:
     def __init__(self):
         self.health = Health()
 
     def run(self):
-        now = datetime.utcnow() + timedelta(hours=SERVER_OFFSET_HOURS)
+        now = datetime.utcnow()
 
-        print("🔥 ENGINE RUN:", now)
+        now_minutes = now.hour * 60 + now.minute
 
-        upcoming = self.get_upcoming_bosses(now)
+        print("🔥 ENGINE RUN:", now, "MIN:", now_minutes)
+
+        upcoming = self.get_upcoming_bosses(now_minutes)
 
         print("🔥 UPCOMING:", len(upcoming))
 
@@ -39,28 +37,17 @@ class MIR4Engine:
 
         return boss_msg, dashboard_msg
 
-    def get_upcoming_bosses(self, now):
+    def get_upcoming_bosses(self, now_minutes):
         alerts = []
 
         for b in BOSSES:
-            boss_time = self.parse_time(b["time"], now)
+            h, m = map(int, b["time"].split(":"))
+            boss_minutes = h * 60 + m
 
-            alert_time = boss_time - timedelta(minutes=15)
+            alert_minutes = boss_minutes - 15
 
-            start = alert_time - timedelta(minutes=2)
-            end = alert_time + timedelta(minutes=2)
-
-            if start <= now <= end:
+            # 🔥 janela de tolerância
+            if abs(now_minutes - alert_minutes) <= 2:
                 alerts.append(b)
 
         return alerts
-
-    def parse_time(self, t, now):
-        h, m = map(int, t.split(":"))
-
-        return now.replace(
-            hour=h,
-            minute=m,
-            second=0,
-            microsecond=0
-        )
