@@ -1,57 +1,45 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+import os
+
 from bosses import BOSSES
-from discord_formatter import build_boss_message
 from webhook import send_message
-from health import Health
+import state
 
 
 class MIR4Engine:
     def __init__(self):
-        self.health = Health()
-        self.sent_cache = set()  # 🧠 anti dupe
+        print("🔥 ENGINE INIT")
 
     def run(self):
         now = datetime.utcnow()
 
-        print("🔥 ENGINE RUN:", now)
+        print("\n==============================")
+        print("🔥 MIR4 ENGINE DEBUG START")
+        print("==============================")
 
-        upcoming = self.get_upcoming_bosses(now)
+        # 📍 CONFIRMA ONDE O CÓDIGO ESTÁ A CORRER
+        print("🔥 ENGINE FILE:", __file__)
+        print("🔥 WORKING DIR:", os.getcwd())
 
-        print("🔥 UPCOMING:", len(upcoming))
+        # 📦 CONFIRMA STATE IMPORTADO
+        print("🔥 STATE FILE:", state.__file__)
 
-        boss_msg = build_boss_message(upcoming)
+        # 📊 BOSSES CHECK
+        print("🔥 TOTAL BOSSES:", len(BOSSES))
 
-        self.health.update(len(upcoming))
-        dashboard_msg = self.health.build()
+        # 🧪 TESTE SIMPLES DE MENSAGEM
+        test_msg = (
+            "🔥 MIR4 ENGINE DEBUG TEST\n\n"
+            f"Time: {now.isoformat()}\n"
+            f"Bosses loaded: {len(BOSSES)}\n"
+        )
 
-        final_msg = ""
+        print("🔥 SENDING TEST MESSAGE...")
 
-        if boss_msg:
-            final_msg += boss_msg + "\n\n"
+        send_message(test_msg)
 
-        final_msg += dashboard_msg
+        print("🔥 SEND COMPLETE")
 
-        if upcoming:
-            send_message(final_msg)
+        print("==============================\n")
 
-        return boss_msg, dashboard_msg
-
-    def get_upcoming_bosses(self, now):
-        alerts = []
-
-        for b in BOSSES:
-            h, m = map(int, b["time"].split(":"))
-            boss_time = now.replace(hour=h, minute=m, second=0, microsecond=0)
-
-            diff = (boss_time - now).total_seconds()
-
-            # 🎯 janela 30 minutos antes
-            if 0 <= diff <= 1800:
-                key = f"{b['world']}|{b['boss']}|{b['time']}"
-
-                # 🧠 anti duplicação
-                if key not in self.sent_cache:
-                    self.sent_cache.add(key)
-                    alerts.append(b)
-
-        return alerts
+        return "DEBUG", "DEBUG"
