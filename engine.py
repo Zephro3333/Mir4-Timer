@@ -5,20 +5,18 @@ from webhook import send_message
 
 class MIR4Engine:
     def run(self):
-        print("🔥 ENGINE IS RUNNING")
+        now = datetime.utcnow()
 
-        print("🔥 BOSSES TOTAL:", len(BOSSES))
+        print("🔥 ENGINE RUN:", now)
 
-        # 💣 FORÇA TOTAL (SEM FILTROS)
-        msg = "🔥 FINAL DISCORD TEST\n\n"
+        msg = "🔥 ENGINE WORKS CONFIRMATION\n\n"
 
-        for b in BOSSES[:5]:
+        # 🔥 SEM FILTRO NENHUM
+        for b in BOSSES[:3]:
             msg += f"{b['world']} | {b['boss']} | {b['time']}\n"
-
-        print("🔥 MESSAGE BUILT")
 
         send_message(msg)
 
-        print("🔥 SENT")
+        print("🔥 SENT FROM ENGINE")
 
-        return msg, ""
+        return "", ""
