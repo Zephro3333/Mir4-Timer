@@ -3,11 +3,13 @@ from bosses import BOSSES
 from discord_formatter import build_boss_message
 from webhook import send_message
 from health import Health
+from state import State
 
 
 class MIR4Engine:
     def __init__(self):
         self.health = Health()
+        self.state = State()
 
     def run(self):
         now = datetime.utcnow()
@@ -28,12 +30,13 @@ class MIR4Engine:
 
         final_msg += dashboard_msg
 
+        # 🚀 só envia se existir boss
         if upcoming:
             send_message(final_msg)
 
         return boss_msg, dashboard_msg
 
-    # ⏱️ 15 min alert logic
+    # ⏱️ lógica alerta 15 min
     def get_upcoming_bosses(self, now):
         alerts = []
 
@@ -41,11 +44,25 @@ class MIR4Engine:
             boss_time = self.parse_time(b["time"], now)
             alert_time = boss_time - timedelta(minutes=15)
 
+            # ✔ minuto correto
             if alert_time.hour == now.hour and alert_time.minute == now.minute:
-                alerts.append(b)
+
+                # 🔒 chave única
+                key = f"{b['boss']}_{b['time']}"
+
+                # evita spam
+                if not self.state.is_sent(key):
+                    alerts.append(b)
+                    self.state.mark_sent(key)
 
         return alerts
 
     def parse_time(self, t, now):
         h, m = map(int, t.split(":"))
-        return now.replace(hour=h, minute=m, second=0, microsecond=0)
+
+        return now.replace(
+            hour=h,
+            minute=m,
+            second=0,
+            microsecond=0
+        )
