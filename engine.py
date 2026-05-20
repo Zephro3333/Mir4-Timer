@@ -28,7 +28,6 @@ class MIR4Engine:
 
             diff = (boss_time - now).total_seconds()
 
-            # 🔥 30 min antes
             if 0 <= diff <= 1800:
                 alerts.append(b)
 
@@ -40,14 +39,19 @@ class MIR4Engine:
         grouped = {}
 
         for b in bosses:
-            key = f"{b['world']} | {b['time']}"
+            key = f"{b['world']}|{b['time']}"
             grouped.setdefault(key, []).append(b)
 
         for group, items in grouped.items():
-            msg += f"{group}\n"
+            world, time = group.split("|")
+
+            # 🌍 NOVO HEADER
+            msg += f"🌍 {world} ⏰ {time}\n\n"
 
             for b in items:
-                msg += f"⚔️ {b['boss']}\n📍 {b['location']}\n🏷️ {b['layer']}\n\n"
+                msg += f"⚔️ {b['boss']}\n"
+                msg += f"📍 {b['location']}\n"
+                msg += f"🏷️ {b['layer']}\n\n"
 
             msg += "----------------------\n\n"
 
