@@ -36,21 +36,25 @@ class MIR4Engine:
 
         return boss_msg, dashboard_msg
 
-    # ⏱️ lógica alerta 15 min
+    # ⏱️ lógica alerta 15 min antes
     def get_upcoming_bosses(self, now):
         alerts = []
 
         for b in BOSSES:
             boss_time = self.parse_time(b["time"], now)
+
+            # 15 minutos antes
             alert_time = boss_time - timedelta(minutes=15)
 
-            # ✔ minuto correto
-            if alert_time.hour == now.hour and alert_time.minute == now.minute:
+            # tolerância github cron
+            diff = abs((now - alert_time).total_seconds())
 
-                # 🔒 chave única
+            # aceita até 90 segundos
+            if diff <= 90:
+
                 key = f"{b['boss']}_{b['time']}"
 
-                # evita spam
+                # evita duplicados
                 if not self.state.is_sent(key):
                     alerts.append(b)
                     self.state.mark_sent(key)
