@@ -1,45 +1,19 @@
 from datetime import datetime
 import os
 
-from bosses import BOSSES
-from webhook import send_message
-import state
-
 
 class MIR4Engine:
-    def __init__(self):
-        print("🔥 ENGINE INIT")
-
     def run(self):
         now = datetime.utcnow()
 
-        print("\n==============================")
-        print("🔥 MIR4 ENGINE DEBUG START")
-        print("==============================")
+        print("\n🔥🔥🔥 ENGINE FINGERPRINT 🔥🔥🔥")
+        print("FILE:", __file__)
+        print("DIR:", os.getcwd())
+        print("TIME:", now.isoformat())
 
-        # 📍 CONFIRMA ONDE O CÓDIGO ESTÁ A CORRER
-        print("🔥 ENGINE FILE:", __file__)
-        print("🔥 WORKING DIR:", os.getcwd())
+        with open("engine_fingerprint.txt", "w") as f:
+            f.write(f"{__file__}\n{now}\n")
 
-        # 📦 CONFIRMA STATE IMPORTADO
-        print("🔥 STATE FILE:", state.__file__)
+        print("🔥 FILE WRITTEN: engine_fingerprint.txt")
 
-        # 📊 BOSSES CHECK
-        print("🔥 TOTAL BOSSES:", len(BOSSES))
-
-        # 🧪 TESTE SIMPLES DE MENSAGEM
-        test_msg = (
-            "🔥 MIR4 ENGINE DEBUG TEST\n\n"
-            f"Time: {now.isoformat()}\n"
-            f"Bosses loaded: {len(BOSSES)}\n"
-        )
-
-        print("🔥 SENDING TEST MESSAGE...")
-
-        send_message(test_msg)
-
-        print("🔥 SEND COMPLETE")
-
-        print("==============================\n")
-
-        return "DEBUG", "DEBUG"
+        return "", ""
