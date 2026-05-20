@@ -8,6 +8,7 @@ from health import Health
 class MIR4Engine:
     def __init__(self):
         self.health = Health()
+        self.sent_cache = set()  # 🧠 anti dupe
 
     def run(self):
         now = datetime.utcnow()
@@ -35,7 +36,6 @@ class MIR4Engine:
 
         return boss_msg, dashboard_msg
 
-    # 💣 NOVA LÓGICA DEFINITIVA
     def get_upcoming_bosses(self, now):
         alerts = []
 
@@ -45,8 +45,13 @@ class MIR4Engine:
 
             diff = (boss_time - now).total_seconds()
 
-            # 🔥 regra REAL: próximos 20 minutos (não janela exata)
-            if 0 <= diff <= 1200:
-                alerts.append(b)
+            # 🎯 janela 30 minutos antes
+            if 0 <= diff <= 1800:
+                key = f"{b['world']}|{b['boss']}|{b['time']}"
+
+                # 🧠 anti duplicação
+                if key not in self.sent_cache:
+                    self.sent_cache.add(key)
+                    alerts.append(b)
 
         return alerts
