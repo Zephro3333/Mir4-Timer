@@ -12,15 +12,23 @@ class State:
             with open(self.path, "w") as f:
                 json.dump({}, f)
 
-        with open(self.path, "r") as f:
-            self.data = json.load(f)
+        try:
+            with open(self.path, "r") as f:
+                self.data = json.load(f)
+        except:
+            self.data = {}
 
-    # 🔒 evita duplicados
     def is_sent(self, key):
         return self.data.get(key, False)
 
     def mark_sent(self, key):
         self.data[key] = True
 
-        with open(self.path, "w") as f:
-            json.dump(self.data, f, indent=2)
+        try:
+            with open(self.path, "w") as f:
+                json.dump(self.data, f, indent=2)
+
+            print("✅ STATE SAVED")
+
+        except Exception as e:
+            print("❌ STATE SAVE ERROR:", str(e))
