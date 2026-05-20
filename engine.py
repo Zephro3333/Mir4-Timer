@@ -5,12 +5,16 @@ from webhook import send_message
 from health import Health
 
 
+# 🎯 AJUSTE DE SERVIDOR (ALTERÁVEL)
+SERVER_OFFSET_HOURS = 0  # <- MUDA ISTO SE NECESSÁRIO
+
+
 class MIR4Engine:
     def __init__(self):
         self.health = Health()
 
     def run(self):
-        now = datetime.utcnow()
+        now = datetime.utcnow() + timedelta(hours=SERVER_OFFSET_HOURS)
 
         print("🔥 ENGINE RUN:", now)
 
@@ -35,7 +39,6 @@ class MIR4Engine:
 
         return boss_msg, dashboard_msg
 
-    # 💥 NOVA LÓGICA ROBUSTA
     def get_upcoming_bosses(self, now):
         alerts = []
 
@@ -44,7 +47,6 @@ class MIR4Engine:
 
             alert_time = boss_time - timedelta(minutes=15)
 
-            # 🔥 janela de 5 minutos (ANTI CRON DRIFT)
             start = alert_time - timedelta(minutes=2)
             end = alert_time + timedelta(minutes=2)
 
