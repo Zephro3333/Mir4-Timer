@@ -35,6 +35,7 @@ class MIR4Engine:
 
         return boss_msg, dashboard_msg
 
+    # 💣 NOVA LÓGICA DEFINITIVA
     def get_upcoming_bosses(self, now):
         alerts = []
 
@@ -42,11 +43,10 @@ class MIR4Engine:
             h, m = map(int, b["time"].split(":"))
             boss_time = now.replace(hour=h, minute=m, second=0, microsecond=0)
 
-            # 🔥 regra simples e robusta
             diff = (boss_time - now).total_seconds()
 
-            # entre 0 e 15 min antes
-            if 0 <= diff <= 900:
+            # 🔥 regra REAL: próximos 20 minutos (não janela exata)
+            if 0 <= diff <= 1200:
                 alerts.append(b)
 
         return alerts
